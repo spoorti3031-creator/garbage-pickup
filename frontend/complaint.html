@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-page="complaint">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WastePro Complaint Center</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="complaint">
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand-bar">
+        <div class="brand-mark"></div>
+        <div>
+          <span class="brand-name">WastePro</span>
+          <span class="brand-subtitle">Complaint Center</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <a class="button button--ghost" href="index.html">Home</a>
+        <button class="button button--secondary" onclick="toggleNotifications()" id="notificationButton">Notifications <span id="notificationBadge" class="notification-badge">0</span></button>
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+          <option value="en">EN</option>
+          <option value="hi">HI</option>
+          <option value="kn">KN</option>
+          <option value="te">TE</option>
+          <option value="es">ES</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card__header">
+        <h2 id="complaintHeading">File a Complaint</h2>
+        <p id="authDesc">Enter your account details to continue.</p>
+      </div>
+      <div class="card__body">
+        <div class="page-note" id="userStatus"></div>
+        <form id="complaintForm" class="pickup-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" placeholder="Brief summary" required>
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category">
+                <option value="Service">Service</option>
+                <option value="Cleanliness">Cleanliness</option>
+                <option value="Safety">Safety</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Describe the issue" rows="4" required></textarea>
+          </div>
+          <button class="button button--primary" type="button" onclick="submitComplaint()" id="submitComplaintButton">Submit Complaint</button>
+          <p id="complaintMessage" class="status-message"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__header">
+        <h2>My Complaint History</h2>
+      </div>
+      <div class="card__body">
+        <ul id="complaintHistory" class="pickup-list"></ul>
+      </div>
+    </section>
+
+    <div class="notification-panel hidden" id="notificationPanel">
+      <h3 id="notificationHeading">Notifications</h3>
+      <ul id="notificationList" class="pickup-list"></ul>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

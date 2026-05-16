@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WastePro Pickup Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <div id="onboardingModal" class="onboarding-modal hidden">
+      <div class="onboarding-card">
+        <div class="onboarding-content">
+          <h2>Welcome to WastePro</h2>
+          <p>Quickly schedule pickups, file complaints, and view municipality announcements.</p>
+          <ol>
+            <li>Use "Schedule Pickup" to request a trash pickup for your location.</li>
+            <li>Open "Notifications" to see system messages and updates.</li>
+            <li>Visit "Complaint Center" to submit issues to your municipality.</li>
+          </ol>
+          <div style="text-align:right; margin-top:12px;">
+            <button id="onboardingSkip" class="button button--ghost" style="margin-right:8px;">Skip</button>
+            <button id="onboardingNext" class="button button--primary">Next</button>
+          </div>
+        </div>
+        <div class="onboarding-visual" aria-hidden="true">
+          <img src="images/onboarding-illustration.svg" alt="Onboarding illustration" class="onboarding-image">
+        </div>
+      </div>
+    </div>
+    <script>
+      try {
+        if (!localStorage.getItem('wasteproSeenOnboarding')) {
+          document.getElementById('onboardingModal')?.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.warn('Onboarding display check failed', error);
+      }
+    </script>
+    <header class="topbar">
+      <div class="brand-bar">
+        <div class="brand-mark">♻️</div>
+        <div>
+          <span class="brand-name">WastePro</span>
+          <span class="brand-subtitle">Smart Pickup Management</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="button button--ghost" onclick="showAuth()" id="authButton">Login / Register</button>
+        <button class="button button--secondary" onclick="toggleNotifications()" id="notificationButton">Notifications <span id="notificationBadge" class="notification-badge">0</span></button>
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+          <option value="en">EN</option>
+          <option value="hi">HI</option>
+          <option value="kn">KN</option>
+          <option value="te">TE</option>
+          <option value="es">ES</option>
+        </select>
+      </div>
+    </header>
+
+    <section id="homeSection" class="hero">
+      <div class="hero__copy">
+        <span class="eyebrow">Classic city services</span>
+        <h1 id="heroTitle">Clean neighborhoods start with reliable pickup scheduling.</h1>
+        <p id="heroSubtitle">WastePro makes garbage pickup planning simple with a polished, elegant dashboard for residents and administrators.</p>
+        <div class="hero__actions">
+          <button class="button button--primary" onclick="showAuth()" id="heroCta">Get Started</button>
+          <a class="hero__link" href="#features" id="heroLink">Explore features</a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <div class="visual-panel">
+          <div class="visual-panel__item">
+            <span>08:00 AM</span>
+            <p>Scheduled pickup</p>
+          </div>
+          <div class="visual-panel__item highlight">
+            <span>04</span>
+            <p>Active requests</p>
+          </div>
+          <div class="visual-panel__item">
+            <span>Zone 12</span>
+            <p>Fast service</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="feature-card">
+        <h2 id="feature1Title">📅 Effortless scheduling</h2>
+        <p id="feature1Desc">Submit pickup requests quickly and keep your neighborhood calendar in sync with smart scheduling.</p>
+      </div>
+      <div class="feature-card">
+        <h2 id="feature2Title">📊 Intuitive dashboard</h2>
+        <p id="feature2Desc">Monitor requests and view scheduled pickups with an easy-to-read interface and real-time updates.</p>
+      </div>
+      <div class="feature-card">
+        <h2 id="feature3Title">📱 Responsive experience</h2>
+        <p id="feature3Desc">Works perfectly on desktop or mobile, with a modern design and seamless navigation.</p>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <section class="card auth-card hidden" id="authSection">
+        <div class="card__header">
+          <h2 id="authHeading">🔐 Login / Register</h2>
+          <p id="authDesc">Manage your waste pickup requests securely</p>
+        </div>
+        <div class="card__body">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+          </div>
+          <div class="button-row">
+            <button class="button button--secondary" onclick="register()" id="registerButton">Register</button>
+            <button class="button button--primary" onclick="login()" id="loginButton">Login</button>
+          </div>
+          <p id="loginInfo" class="status-message">Use the form to log in or register. Admin username is admin.</p>
+          <p id="authMessage" class="status-message"></p>
+        </div>
+      </section>
+
+      <section class="card dashboard-card hidden" id="dashboard">
+        <div class="card__header">
+          <h2 id="dashboardHeading">📊 Dashboard</h2>
+          <p class="dashboard__welcome" id="welcomeMessage"></p>
+        </div>
+        <div class="card__body">
+          <form id="pickupForm" class="pickup-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="location">Pickup Location</label>
+                <input type="text" id="location" placeholder="Enter location" required>
+              </div>
+              <div class="form-group">
+                <label>Live Location</label>
+                <div class="live-location-row">
+                  <button type="button" class="button button--secondary" id="useMyLocationButton" onclick="useMyLocation()">📍 Use My Location</button>
+                  <span id="locationStatus" class="status-message"></span>
+                </div>
+                <div id="locationMapContainer" class="location-map-container hidden">
+                  <div class="location-info">
+                    <p><strong>Coordinates:</strong> <span id="coordsDisplay">—</span></p>
+                    <p><strong>Address:</strong> <span id="addressDisplay">—</span></p>
+                    <p><strong>Accuracy:</strong> <span id="accuracyDisplay">—</span> meters</p>
+                  </div>
+                  <iframe id="locationMap" class="location-map" style="border:none; border-radius: 8px; width: 100%; height: 300px;" allowfullscreen="" loading="lazy"></iframe>
+                  <button type="button" class="button button--secondary" onclick="refreshLocation()" style="margin-top: 8px; width: 100%;">🔄 Refresh Location</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" required>
+              </div>
+              <div class="form-group">
+                <label for="time">Time</label>
+                <input type="time" id="time" required>
+              </div>
+            </div>
+            <button class="button button--primary" type="submit" id="scheduleButton">Schedule Pickup</button>
+          </form>
+          <div class="pickup-list-block">
+            <h3>🗑️ Your Scheduled Pickups</h3>
+            <ul id="pickupList" class="pickup-list"></ul>
+          </div>
+          <div class="announcement-block">
+            <h3 id="announcementHeading">📢 Municipality Announcements</h3>
+            <ul id="announcementList" class="announcement-list"></ul>
+          </div>
+          <div class="dashboard-actions">
+            <button class="button button--secondary" onclick="showComplaintSection()" id="complaintSectionButton">📝 Complaint Center</button>
+            <button class="button button--ghost" onclick="showAdminSection()" id="adminSectionButton">⚙️ Admin Panel</button>
+          </div>
+          <div class="notification-panel hidden" id="notificationPanel">
+            <h3 id="notificationHeading">🔔 Notifications</h3>
+            <ul id="notificationList" class="pickup-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card hidden" id="complaintSection">
+        <div class="card__header">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="complaintHeading">📝 File a Complaint</h2>
+            <button class="button button--ghost" onclick="showDashboard()" style="padding: 8px 16px; font-size: 0.9rem;">← Back to Dashboard</button>
+          </div>
+          <p id="authDesc">Share your concerns with us</p>
+        </div>
+        <div class="card__body">
+          <div class="page-note" id="userStatus"></div>
+          <form id="complaintForm" class="pickup-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" placeholder="Brief summary" required>
+              </div>
+              <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category">
+                  <option value="Service">Service</option>
+                  <option value="Cleanliness">Cleanliness</option>
+                  <option value="Safety">Safety</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" placeholder="Describe the issue" rows="4" required></textarea>
+            </div>
+            <button class="button button--primary" type="button" onclick="submitComplaint()" id="submitComplaintButton">Submit Complaint</button>
+            <p id="complaintMessage" class="status-message"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="card hidden" id="adminSection">
+        <div class="card__header">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="adminHeading">⚙️ Admin Panel</h2>
+            <button class="button button--ghost" onclick="showDashboard()" style="padding: 8px 16px; font-size: 0.9rem;">← Back to Dashboard</button>
+          </div>
+          <p id="adminTips">Manage system, review requests, complaints, and announcements</p>
+        </div>
+        <div class="card__body admin-dashboard">
+          <div class="admin-summary">
+            <div>Users: <span id="adminUsersCount">0</span></div>
+            <div>Pickups: <span id="adminPickupsCount">0</span></div>
+            <div>Complaints: <span id="adminComplaintsCount">0</span></div>
+            <div>Announcements: <span id="adminAnnouncementsCount">0</span></div>
+          </div>
+
+          <div class="admin-grid">
+            <div class="admin-block">
+              <h3>Active Pickup Requests</h3>
+              <ul id="adminPickupList" class="pickup-list"></ul>
+            </div>
+            <div class="admin-block">
+              <h3>Complaint Inbox</h3>
+              <ul id="adminComplaintList" class="pickup-list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Google Maps API -->
+  <script src="script.js"></script>
+</body>
+</html>
