@@ -53,11 +53,15 @@
               <label for="password">Password</label>
               <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
             </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required autocomplete="tel">
+            </div>
             <div class="button-row">
               <button type="submit" class="button button--primary" id="loginButton">Login</button>
             </div>
           </form>
-          <p id="loginInfo" class="status-message">Use the form below to log in. Admin username is admin.</p>
+          <p id="loginInfo" class="status-message">Use the form below to log in with email, password, and phone number. Admin username is admin.</p>
           <p id="authMessage" class="status-message"></p>
           <p style="margin-top: 1rem; font-size: 0.95rem;">New here? <a href="register.html">Create an account</a>.</p>
         </div>

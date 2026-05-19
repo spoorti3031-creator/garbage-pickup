@@ -318,7 +318,11 @@ public class Main {
     }
 
     private static void serveFile(String filename, HttpExchange exchange) throws IOException {
-        Path filePath = Paths.get("../frontend/" + filename);
+        Path baseDir = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        Path filePath = baseDir.resolve("frontend").resolve(filename);
+        if (!Files.exists(filePath)) {
+            filePath = baseDir.resolve(Paths.get("backend", "..", "frontend", filename)).normalize();
+        }
         if (!Files.exists(filePath)) {
             sendResponse(exchange, 404, "{\"error\":\"File not found\"}");
             return;

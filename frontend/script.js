@@ -392,11 +392,27 @@ async function submitComplaint() {
     messageBox.textContent = data.message || 'Complaint filed successfully.';
     messageBox.style.color = 'green';
     loadComplaintHistory();
+    showNotificationPanel();
   } else {
     messageBox.textContent = data.error || 'Unable to submit complaint.';
     messageBox.style.color = 'red';
   }
-  loadNotifications();
+}
+
+function toggleNotifications() {
+  const panel = document.getElementById('notificationPanel');
+  if (!panel) return;
+  const isHidden = panel.classList.toggle('hidden');
+  if (!isHidden) {
+    loadComplaintNotifications();
+  }
+}
+
+function showNotificationPanel() {
+  const panel = document.getElementById('notificationPanel');
+  if (!panel) return;
+  panel.classList.remove('hidden');
+  loadComplaintNotifications();
 }
 
 async function loadPickups() {
@@ -661,15 +677,16 @@ async function register() {
 async function login() {
   const username = document.getElementById('username')?.value;
   const password = document.getElementById('password')?.value;
+  const phone = document.getElementById('phone')?.value;
   const authMessage = document.getElementById('authMessage');
-  if (!username || !password) {
-    if (authMessage) authMessage.textContent = 'Email and password are required.';
+  if (!username || !password || !phone) {
+    if (authMessage) authMessage.textContent = 'Email, password, and phone number are required.';
     return;
   }
   const response = await fetch('http://localhost:8080/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username, password, phone })
   });
   const data = await response.json();
   if (response.ok) {
@@ -684,6 +701,26 @@ async function login() {
   }
 }
 
+async function loadComplaintNotifications() {
+  const heading = document.getElementById('notificationHeading');
+  if (heading) heading.textContent = 'Complaints';
+  const list = document.getElementById('notificationList');
+  if (!list) return;
+  if (!currentUser) {
+    list.innerHTML = '<li>Please log in to view your complaints.</li>';
+    return;
+  }
+  const response = await fetch('http://localhost:8080/api/complaints');
+  if (!response.ok) return;
+  const complaints = await response.json();
+  list.innerHTML = '';
+  complaints.filter(item => item.username === currentUser).forEach((complaint) => {
+    const li = document.createElement('li');
+    li.textContent = `${complaint.subject} (${complaint.category}) — ${complaint.status}`;
+    list.appendChild(li);
+  });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   const storedUser = getCurrentUser();
   setCurrentUser(storedUser);
@@ -691,6 +728,13 @@ window.addEventListener('DOMContentLoaded', () => {
   if (languageSelect) languageSelect.value = activeLanguage;
   translatePage();
   schedulePickup();
+
+  const navLoginButton = document.getElementById('loginNavButton');
+  if (navLoginButton) {
+    navLoginButton.addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  }
 
   const page = document.body.dataset.page;
   const params = new URLSearchParams(window.location.search);
