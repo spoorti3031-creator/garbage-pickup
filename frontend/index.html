@@ -6,7 +6,7 @@
   <title>WastePro Pickup Management</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-page="register">
   <div class="page-shell">
     <div id="onboardingModal" class="onboarding-modal hidden">
       <div class="onboarding-card">
@@ -46,8 +46,9 @@
         </div>
       </div>
       <div class="topbar-actions">
-        <button class="button button--ghost" onclick="showAuth()" id="authButton">Login / Register</button>
-        <button class="button button--secondary" onclick="toggleNotifications()" id="notificationButton">Notifications <span id="notificationBadge" class="notification-badge">0</span></button>
+        <button class="button button--ghost" onclick="window.location.href='login.html'" id="loginNavButton">Login</button>
+        <button class="button button--secondary" onclick="window.location.href='index.html'" id="registerNavButton">Register</button>
+        <button class="button button--ghost" onclick="toggleNotifications()" id="notificationButton">Notifications <span id="notificationBadge" class="notification-badge">0</span></button>
         <select id="languageSelect" onchange="changeLanguage(this.value)">
           <option value="en">EN</option>
           <option value="hi">HI</option>
@@ -64,7 +65,7 @@
         <h1 id="heroTitle">Clean neighborhoods start with reliable pickup scheduling.</h1>
         <p id="heroSubtitle">WastePro makes garbage pickup planning simple with a polished, elegant dashboard for residents and administrators.</p>
         <div class="hero__actions">
-          <button class="button button--primary" onclick="showAuth()" id="heroCta">Get Started</button>
+          <button class="button button--primary" onclick="document.getElementById('authSection')?.scrollIntoView({behavior: 'smooth'})" id="heroCta">Register Now</button>
           <a class="hero__link" href="#features" id="heroLink">Explore features</a>
         </div>
       </div>
@@ -102,10 +103,11 @@
     </section>
 
     <div class="content-grid">
-      <section class="card auth-card hidden" id="authSection">
+
+      <section class="card auth-card" id="authSection">
         <div class="card__header">
-          <h2 id="authHeading">🔐 Login / Register</h2>
-          <p id="authDesc">Manage your waste pickup requests securely</p>
+          <h2 id="authHeading">📝 Register</h2>
+          <p id="authDesc">Create your WastePro account to get started.</p>
         </div>
         <div class="card__body">
           <div class="form-group">
@@ -117,11 +119,11 @@
             <input type="password" id="password" placeholder="Enter password">
           </div>
           <div class="button-row">
-            <button class="button button--secondary" onclick="register()" id="registerButton">Register</button>
-            <button class="button button--primary" onclick="login()" id="loginButton">Login</button>
+            <button class="button button--primary" onclick="register()" id="registerButton">Register</button>
           </div>
-          <p id="loginInfo" class="status-message">Use the form to log in or register. Admin username is admin.</p>
+          <p id="loginInfo" class="status-message">Start by creating a new account. Admin username is admin.</p>
           <p id="authMessage" class="status-message"></p>
+          <p style="margin-top: 1rem; font-size: 0.95rem;">Already have an account? <a href="login.html">Login here</a>.</p>
         </div>
       </section>
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WastePro Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="login">
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand-bar">
+        <div class="brand-mark">♻️</div>
+        <div>
+          <span class="brand-name">WastePro</span>
+          <span class="brand-subtitle">Smart Pickup Management</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="button button--ghost" onclick="window.location.href='index.html'" id="homeButton">Home</button>
+        <button class="button button--secondary" onclick="window.location.href='register.html'" id="registerNavButton">Register</button>
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+          <option value="en">EN</option>
+          <option value="hi">HI</option>
+          <option value="kn">KN</option>
+          <option value="te">TE</option>
+          <option value="es">ES</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero__copy">
+        <span class="eyebrow">Welcome back</span>
+        <h1 id="heroTitle">Login to your WastePro account</h1>
+        <p id="heroSubtitle">Access your pickup requests, complaints and notifications.</p>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <section class="card auth-card" id="authSection">
+        <div class="card__header">
+          <h2 id="authHeading">🔐 Login</h2>
+          <p id="authDesc">Enter your credentials to sign in.</p>
+        </div>
+        <div class="card__body">
+          <form id="loginForm" onsubmit="event.preventDefault(); login();">
+            <div class="form-group">
+              <label for="username">Email</label>
+              <input type="email" id="username" name="username" placeholder="Enter your email" required autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+            </div>
+            <div class="button-row">
+              <button type="submit" class="button button--primary" id="loginButton">Login</button>
+            </div>
+          </form>
+          <p id="loginInfo" class="status-message">Use the form below to log in. Admin username is admin.</p>
+          <p id="authMessage" class="status-message"></p>
+          <p style="margin-top: 1rem; font-size: 0.95rem;">New here? <a href="register.html">Create an account</a>.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

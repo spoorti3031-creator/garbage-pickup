@@ -238,7 +238,8 @@ function translatePage() {
   const translated = translations[activeLanguage] || translations.en;
 
   const mapped = {
-    authButton: 'loginRegister',
+    loginNavButton: 'loginButton',
+    registerNavButton: 'registerButton',
     registerButton: 'registerButton',
     loginButton: 'loginButton',
     scheduleButton: 'schedulePickup',
@@ -252,14 +253,11 @@ function translatePage() {
     feature2Desc: 'feature2Desc',
     feature3Title: 'feature3Title',
     feature3Desc: 'feature3Desc',
-    authHeading: 'authHeading',
-    authDesc: 'authDesc',
     dashboardHeading: 'dashboardHeading',
     announcementHeading: 'announcementHeading',
     complaintHeading: 'complaintHeading',
     notificationHeading: 'notificationHeading',
-    adminHeading: 'adminHeading',
-    loginInfo: 'loginInfo'
+    adminHeading: 'adminHeading'
   };
 
   Object.entries(mapped).forEach(([elementId, key]) => {
@@ -509,11 +507,17 @@ async function loadAdminComplaints() {
 
 function hideAllSections() {
   document.getElementById('homeSection')?.classList.add('hidden');
+  document.getElementById('features')?.classList.add('hidden');
   document.getElementById('authSection')?.classList.add('hidden');
   document.getElementById('dashboard')?.classList.add('hidden');
   document.getElementById('complaintSection')?.classList.add('hidden');
   document.getElementById('adminSection')?.classList.add('hidden');
   document.getElementById('notificationPanel')?.classList.add('hidden');
+}
+
+function showRegister() {
+  hideAllSections();
+  document.getElementById('authSection')?.classList.remove('hidden');
 }
 
 function showHome() {
@@ -633,7 +637,7 @@ async function register() {
   const password = document.getElementById('password')?.value;
   const authMessage = document.getElementById('authMessage');
   if (!username || !password) {
-    if (authMessage) authMessage.textContent = 'Username and password are required.';
+    if (authMessage) authMessage.textContent = 'Email and password are required.';
     return;
   }
   const response = await fetch('http://localhost:8080/api/auth/register', {
@@ -644,7 +648,11 @@ async function register() {
   const data = await response.json();
   if (response.ok) {
     setCurrentUser(username);
-    showDashboard();
+    if (document.body.dataset.page === 'login' || document.body.dataset.page === 'register') {
+      window.location.href = 'index.html';
+    } else {
+      showDashboard();
+    }
   } else if (authMessage) {
     authMessage.textContent = data.error || 'Registration failed.';
   }
@@ -655,7 +663,7 @@ async function login() {
   const password = document.getElementById('password')?.value;
   const authMessage = document.getElementById('authMessage');
   if (!username || !password) {
-    if (authMessage) authMessage.textContent = 'Username and password are required.';
+    if (authMessage) authMessage.textContent = 'Email and password are required.';
     return;
   }
   const response = await fetch('http://localhost:8080/api/auth/login', {
@@ -666,7 +674,11 @@ async function login() {
   const data = await response.json();
   if (response.ok) {
     setCurrentUser(username);
-    showDashboard();
+    if (document.body.dataset.page === 'login' || document.body.dataset.page === 'register') {
+      window.location.href = 'index.html';
+    } else {
+      showDashboard();
+    }
   } else if (authMessage) {
     authMessage.textContent = data.error || 'Invalid credentials.';
   }
@@ -691,6 +703,12 @@ window.addEventListener('DOMContentLoaded', () => {
     loadAdminPickups();
     loadAdminComplaints();
     loadNotifications();
+  } else if (page === 'login') {
+    if (currentUser) {
+      showDashboard();
+    } else {
+      showAuth();
+    }
   } else {
     // Index page: show onboarding first time, otherwise normal flow.
     // You can force it with ?onboarding=1 or ?showOnboarding=1 in the URL.
@@ -704,7 +722,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (currentUser) {
         showDashboard();
       } else {
-        showHome();
+        showRegister();
       }
     }
   }

@@ -33,6 +33,12 @@ public class Main {
         announcements.add(new Announcement(4L, "Recycling Pickup", "Recycling bins will be collected on Tuesdays in all zones.", "2026-04-04"));
         announcements.add(new Announcement(5L, "Holiday Reminder", "Please place waste bins by 7 AM during holiday weeks.", "2026-04-05"));
         announcements.add(new Announcement(6L, "Road Safety Notice", "Roadworks on Elm Street may affect pickup routes this week.", "2026-04-06"));
+        announcements.add(new Announcement(7L, "Spring Cleanup Drive", "Free bulk waste pickup May 15-17. Register at the city website.", "2026-05-07"));
+        announcements.add(new Announcement(8L, "New Composting Program", "Composting bins now available for all residents. Request yours today.", "2026-05-08"));
+        announcements.add(new Announcement(9L, "Street Cleaning Alert", "Street cleaning on May 20-22. Do not leave garbage on the street.", "2026-05-09"));
+        announcements.add(new Announcement(10L, "Hazardous Waste Disposal", "Hazardous waste collection event on May 23. Drop-off at City Center.", "2026-05-10"));
+        announcements.add(new Announcement(11L, "Holiday Weekend Schedule", "Memorial Day holiday - pickup postponed to May 28. Plan accordingly.", "2026-05-11"));
+        announcements.add(new Announcement(12L, "Sanitation Tax Reminder", "Sanitation bills due by May 31. Pay online to avoid late fees.", "2026-05-12"));
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         System.out.println("Registering context: /api/auth/register");
@@ -53,6 +59,10 @@ public class Main {
         server.createContext("/", exchange -> serveFile("index.html", exchange));
         System.out.println("Registering context: /admin.html");
         server.createContext("/admin.html", exchange -> serveFile("admin.html", exchange));
+        System.out.println("Registering context: /login.html");
+        server.createContext("/login.html", exchange -> serveFile("login.html", exchange));
+        System.out.println("Registering context: /register.html");
+        server.createContext("/register.html", exchange -> serveFile("register.html", exchange));
         System.out.println("Registering context: /complaint.html");
         server.createContext("/complaint.html", exchange -> serveFile("complaint.html", exchange));
         System.out.println("Registering context: /style.css");
