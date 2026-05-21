@@ -703,22 +703,56 @@ async function login() {
 
 async function loadComplaintNotifications() {
   const heading = document.getElementById('notificationHeading');
-  if (heading) heading.textContent = 'Complaints';
+  if (heading) heading.textContent = 'Notifications';
   const list = document.getElementById('notificationList');
   if (!list) return;
   if (!currentUser) {
-    list.innerHTML = '<li>Please log in to view your complaints.</li>';
+    list.innerHTML = '<li>Please log in to view your notifications.</li>';
     return;
   }
-  const response = await fetch('http://localhost:8080/api/complaints');
-  if (!response.ok) return;
-  const complaints = await response.json();
+
+  const [pickupResponse, complaintResponse] = await Promise.all([
+    fetch('http://localhost:8080/api/pickups'),
+    fetch('http://localhost:8080/api/complaints')
+  ]);
+
+  if (!pickupResponse.ok || !complaintResponse.ok) return;
+
+  const pickups = await pickupResponse.json();
+  const complaints = await complaintResponse.json();
+  const userPickups = pickups.filter(item => item.username === currentUser);
+  const userComplaints = complaints.filter(item => item.username === currentUser);
+
   list.innerHTML = '';
-  complaints.filter(item => item.username === currentUser).forEach((complaint) => {
-    const li = document.createElement('li');
-    li.textContent = `${complaint.subject} (${complaint.category}) — ${complaint.status}`;
-    list.appendChild(li);
-  });
+
+  if (userPickups.length === 0 && userComplaints.length === 0) {
+    list.innerHTML = '<li>No scheduled pickups or complaints yet.</li>';
+    return;
+  }
+
+  if (userPickups.length > 0) {
+    const section = document.createElement('li');
+    section.innerHTML = '<strong>Scheduled pickups</strong>';
+    section.classList.add('notification-section');
+    list.appendChild(section);
+    userPickups.forEach((pickup) => {
+      const li = document.createElement('li');
+      li.textContent = `Pickup: ${pickup.location} on ${pickup.date} at ${pickup.time}`;
+      list.appendChild(li);
+    });
+  }
+
+  if (userComplaints.length > 0) {
+    const section = document.createElement('li');
+    section.innerHTML = '<strong>Complaints</strong>';
+    section.classList.add('notification-section');
+    list.appendChild(section);
+    userComplaints.forEach((complaint) => {
+      const li = document.createElement('li');
+      li.textContent = `Complaint: ${complaint.subject} (${complaint.category}) — ${complaint.status}`;
+      list.appendChild(li);
+    });
+  }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
