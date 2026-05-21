@@ -1,5 +1,3 @@
-package backend;
-
 public class AuthController {
     private final UserRepository userRepo;
 

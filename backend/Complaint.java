@@ -1,5 +1,3 @@
-package backend;
-
 public class Complaint {
     private Long id;
     private String username;

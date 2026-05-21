@@ -1,5 +1,3 @@
-package backend;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -17,6 +15,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        System.err.println("=== MAIN METHOD STARTED ===");
         UserRepository repository = new SimpleUserRepository();
         List<PickupRequest> pickups = Collections.synchronizedList(new ArrayList<>());
         List<Complaint> complaints = Collections.synchronizedList(new ArrayList<>());
@@ -41,6 +40,7 @@ public class Main {
         announcements.add(new Announcement(12L, "Sanitation Tax Reminder", "Sanitation bills due by May 31. Pay online to avoid late fees.", "2026-05-12"));
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        System.err.println("DEBUG: Starting context registration");
         System.out.println("Registering context: /api/auth/register");
         server.createContext("/api/auth/register", exchange -> handleRegister(exchange, repository));
         System.out.println("Registering context: /api/auth/login");
@@ -319,11 +319,14 @@ public class Main {
 
     private static void serveFile(String filename, HttpExchange exchange) throws IOException {
         Path baseDir = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        // Try: current_dir/frontend/filename (for running from parent dir)
         Path filePath = baseDir.resolve("frontend").resolve(filename);
+        // Try: current_dir/../frontend/filename (for running from backend dir)
         if (!Files.exists(filePath)) {
-            filePath = baseDir.resolve(Paths.get("backend", "..", "frontend", filename)).normalize();
+            filePath = baseDir.resolve("..").resolve("frontend").resolve(filename).normalize();
         }
         if (!Files.exists(filePath)) {
+            System.err.println("File not found: " + filePath + " (baseDir: " + baseDir + ")");
             sendResponse(exchange, 404, "{\"error\":\"File not found\"}");
             return;
         }

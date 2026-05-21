@@ -1,5 +1,3 @@
-package backend;
-
 public class PickupRequest {
     private Long id;
     private String username;

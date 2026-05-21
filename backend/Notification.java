@@ -1,5 +1,3 @@
-package backend;
-
 public class Notification {
     private Long id;
     private String username;
