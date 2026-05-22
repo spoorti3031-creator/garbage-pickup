@@ -224,14 +224,14 @@ const STORAGE_USER_KEY = 'wasteproCurrentUser';
 function setCurrentUser(username) {
   currentUser = username;
   if (username) {
-    localStorage.setItem(STORAGE_USER_KEY, username);
+    sessionStorage.setItem(STORAGE_USER_KEY, username);
   } else {
-    localStorage.removeItem(STORAGE_USER_KEY);
+    sessionStorage.removeItem(STORAGE_USER_KEY);
   }
 }
 
 function getCurrentUser() {
-  return localStorage.getItem(STORAGE_USER_KEY);
+  return sessionStorage.getItem(STORAGE_USER_KEY);
 }
 
 function translatePage() {
